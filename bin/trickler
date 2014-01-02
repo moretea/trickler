@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+require_relative "../lib/trickler"
+
+
+def help_and_exit
+  puts "USAGE"
+  puts "  Server: #{$0} srv [[host] port] (host and port are optional)"
+  puts "  Client: #{$0} trickle host [port] (only port is optional)"
+  puts "By default, port #{Trickler::DEFAULT_PORT} is used, and the"
+  puts "server binds to #{Trickler::DEFAULT_HOST}."
+  exit 2
+end
+
+def do_serv
+  config = Trickler::Config.new
+
+  case ARGV.length
+    when 1 then config.port = Trickler::DEFAULT_PORT; config.host = Trickler::DEFAULT_HOST
+    when 2 then config.port = ARGV[1].to_i;          config.host = Trickler::DEFAULT_HOST
+    when 3 then config.port = ARGV[2].to_i;          config.host = ARGV[1]
+    else help_and_exit
+  end
+
+  Trickler.serve(config)
+end
+
+def do_trickle
+  config = Trickler::Config.new
+
+  case ARGV.length
+    when 2 then config.port = Trickler::DEFAULT_PORT
+    when 3 then config.port = ARGV[2].to_i
+    else help_and_exit
+  end
+
+  config.host = ARGV[1]
+  config.rate = 2
+  config.size = 100
+  Trickler.trickle(config)
+end
+
+case ARGV[0]
+  when "srv"     then do_serv
+  when "trickle" then do_trickle
+  else help_and_exit
+end

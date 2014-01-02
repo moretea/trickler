@@ -1,0 +1,2 @@
+This is a small program I use to keep data flowing over my tethered 3G connection. 
+This prevents my phone from disconnecting, and making things like an SSH session unusable.
